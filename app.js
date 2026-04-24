@@ -10,6 +10,8 @@ let state = {
 
 const API_URL = 'http://localhost:3000/api/challenges';
 
+
+
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playClick() {
@@ -65,74 +67,31 @@ function renderAuth() {
                     ENTRAR
                 </button>
 
-                <p class="text-xs text-gray-500 mb-4">
-                    Não tem uma conta?
-                    <span onclick="showRegister()" class="text-green-600 font-bold cursor-pointer">
-                        Cadastre-se
-                    </span>
-                </p>
-
-            </div>
-
-        </div>
-    `;
-}
-
-function showRegister() {
-    document.getElementById('app').innerHTML = `
-        <div class="p-6 flex items-center justify-center min-h-screen bg-gray-100">
-
-            <div class="bg-white p-6 rounded-3xl shadow-lg w-full max-w-sm text-center">
-
-                <h1 class="text-4xl font-black mb-6">UpYou</h1>
-
-                <input id="name" placeholder="Seu nome"
-                    class="w-full p-4 border rounded-2xl mb-4 outline-none focus:border-blue-500">
-
-                <button onclick="register()"
-                    class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl mb-3">
-                    CRIAR CONTA
-                </button>
-
                 <p class="text-xs text-gray-500">
-                    Você vai entrar usando apenas seu nome
-                </p>
-
-                <p class="text-xs mt-3 text-green-600 cursor-pointer" onclick="renderAuth()">
-                    Voltar para login
+                    Primeiro acesso? só digite seu nome e entre
                 </p>
 
             </div>
 
         </div>
     `;
-}
-
-function register() {
-    const name = document.getElementById('name').value.trim();
-
-    if (!name) return alert('Digite seu nome');
-
-    localStorage.setItem('upyouAuth', JSON.stringify({ name }));
-
-    alert('Conta criada!');
-    renderAuth();
 }
 
 function login() {
     const name = document.getElementById('name').value.trim();
 
+    if (!name) return alert('Digite seu nome');
+
     const user = JSON.parse(localStorage.getItem('upyouAuth'));
 
-    if (!user) return alert('Crie uma conta primeiro');
-
-    if (user.name === name) {
-        state.user = user.name;
-        state.currentView = 'home';
-        loadChallenges();
-    } else {
-        alert('Nome não encontrado');
+    if (!user) {
+        localStorage.setItem('upyouAuth', JSON.stringify({ name }));
     }
+
+    state.user = name;
+    state.currentView = 'home';
+
+    loadChallenges();
 }
 
 
@@ -147,7 +106,7 @@ function goEvolution() {
     render();
 }
 
-/* ---------------- API ---------------- */
+
 
 async function loadChallenges() {
     try {
@@ -204,7 +163,6 @@ function addHabit(e) {
     e.preventDefault();
 
     const input = document.getElementById('new-habit');
-
     if (!input.value) return;
 
     state.habits.push({
@@ -275,10 +233,8 @@ function render() {
             </form>
 
             ${state.habits.map(h => `
-                <div 
-                    onclick="progressHabit(${h.id})"
-                    class="bg-white p-5 rounded-3xl shadow-md mb-3 flex justify-between items-center cursor-pointer"
-                >
+                <div onclick="progressHabit(${h.id})"
+                    class="bg-white p-5 rounded-3xl shadow-md mb-3 flex justify-between items-center cursor-pointer">
 
                     <div class="flex-1 mr-3">
                         <p class="font-bold">${h.name}</p>
@@ -298,6 +254,7 @@ function render() {
 
                 </div>
             `).join('')}
+
         </div>
         `;
     }
@@ -326,13 +283,8 @@ function render() {
     const nav = `
     <div class="fixed bottom-4 left-4 right-4 bg-black text-white p-3 rounded-full flex justify-around">
 
-        <button onclick="goHome()" class="${state.currentView==='home'?'text-green-400':''}">
-            Home
-        </button>
-
-        <button onclick="goEvolution()" class="${state.currentView==='evolution'?'text-green-400':''}">
-            Evolução
-        </button>
+        <button onclick="goHome()">Home</button>
+        <button onclick="goEvolution()">Evolução</button>
 
     </div>
     `;
@@ -340,6 +292,7 @@ function render() {
     app.innerHTML = header + content + nav;
 }
 
+/* INIT */
 
 state.currentView = 'auth';
 renderAuth();
