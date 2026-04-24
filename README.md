@@ -57,15 +57,15 @@ Inspirado em apps como **Duolingo**, **Habitica** e **Streaks**, o sistema utili
 
 ## Estrutura de Arquivos
 
-```text
+
+´´´
 frontend/
 ├── index.html
 ├── app.js
 ├── style.css
 ├── manifest.json
 └── service-worker.js
-
-
+´´´
 ---
 
 ## 🎨 Design da Interface
