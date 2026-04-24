@@ -66,8 +66,7 @@ frontend/
 └── service-worker.js
 
 
-## Design da Interface
-
+Design da Interface
 Inspiração Visual
 Duolingo
 Habitica
@@ -84,12 +83,7 @@ Verde vibrante → progresso e ação
 Laranja → streak e constância
 Roxo → conquistas e badges
 Amarelo → XP e evolução
-
----
-
-## Como Executar
-
-
+Como Executar
 1. Clonar o Projeto
 git clone <url-do-repositorio>
 2. Abrir a pasta do frontend
@@ -100,9 +94,7 @@ Basta abrir o arquivo index.html no navegador.
 
 Ou utilizar uma extensão como Live Server no VS Code.
 
----
-
-## Integração com Backend
+Integração com Backend
 
 Inicialmente o projeto utilizava apenas localStorage, porém foi preparado para integração com API REST.
 
@@ -115,10 +107,7 @@ POST /api/progress
 
 Essa integração permite persistência real utilizando MongoDB no backend.
 
----
-
-## Melhorias Futuras
-
+Melhorias Futuras
 Login e autenticação de usuário
 Persistência completa de XP e Level no banco
 Sistema real de streak diário
@@ -127,10 +116,7 @@ Ranking entre usuários
 Sistema de notificações
 Confetti ao completar desafios
 Dashboard avançado de evolução
-
----
-
-## Objetivo Acadêmico
+Objetivo Acadêmico
 
 Este projeto foi desenvolvido com foco em aprendizado prático de:
 
@@ -140,13 +126,10 @@ Experiência do usuário (UX)
 Gamificação de sistemas
 Progressive Web Apps
 Integração Full Stack
-Autor
+Autora
 
 Projeto desenvolvido para fins acadêmicos e apresentação de sistema.
 
----
-
-## Autora
 Carolline Barbosa Ferreira
 
 UpYou — Evolua todos os dias. ✨
