@@ -1,49 +1,51 @@
 const BASE_URL = 'https://upyou-backend.onrender.com/api';
 
 async function apiRequest(endpoint, method = 'GET', body = null) {
-    try {
-        const config = {
-            method,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-
-        if (body) {
-            config.body = JSON.stringify(body);
+    const config = {
+        method,
+        headers: {
+            'Content-Type': 'application/json'
         }
+    };
 
-        const response = await fetch(`${BASE_URL}${endpoint}`, config);
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || 'Erro na requisição');
-        }
-
-        return data;
-    } catch (error) {
-        console.error('Erro API:', error.message);
-        throw error;
+    if (body) {
+        config.body = JSON.stringify(body);
     }
+
+    const response = await fetch(`${BASE_URL}${endpoint}`, config);
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Erro na API');
+    }
+
+    return data;
 }
 
 async function registerUser(name) {
-    return await apiRequest('/users/register', 'POST', { name });
+    return apiRequest('/users/register', 'POST', { name });
 }
 
 async function loginUser(name) {
-    return await apiRequest('/users/login', 'POST', { name });
+    return apiRequest('/users/login', 'POST', { name });
 }
 
 async function getChallenges() {
-    return await apiRequest('/challenges');
+    return apiRequest('/challenges');
 }
 
 async function createChallenge(data) {
-    return await apiRequest('/challenges', 'POST', data);
+    return apiRequest('/challenges', 'POST', data);
+}
+
+async function updateChallenge(id, data) {
+    return apiRequest(`/challenges/${id}`, 'PUT', data);
+}
+
+async function deleteChallenge(id) {
+    return apiRequest(`/challenges/${id}`, 'DELETE');
 }
 
 async function saveProgress(data) {
-    return await apiRequest('/progress', 'POST', data);
+    return apiRequest('/progress', 'POST', data);
 }
-

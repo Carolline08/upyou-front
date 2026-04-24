@@ -159,17 +159,104 @@ async function loadChallenges() {
     render();
 }
 
+async function addChallenge() {
+    const title = prompt('Nome do novo hábito:');
+
+    if (!title) return;
+
+    try {
+        await createChallenge({
+            title,
+            description: '',
+            duration: 30,
+            status: 'active'
+        });
+
+        playSuccess();
+        await loadChallenges();
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function completeHabit(id) {
+    try {
+        await updateChallenge(id, {
+            status: 'completed'
+        });
+
+        await saveProgress({
+            challengeId: id
+        });
+
+        state.xp += 10;
+
+        playSuccess();
+        await loadChallenges();
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function removeHabit(id) {
+    try {
+        await deleteChallenge(id);
+        await loadChallenges();
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
 function render() {
     document.getElementById('app').innerHTML = `
         <div class="p-6">
-            <h1 class="text-3xl font-black mb-4">
-                Olá, ${state.user}
-            </h1>
 
-            ${state.habits.map(habit => `
-                <div class="bg-white p-4 rounded-2xl shadow mb-3">
-                    <p class="font-bold">${habit.name}</p>
-                    <p>${habit.progress}% concluído</p>
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-black">
+                    Olá, ${state.user}
+                </h1>
+
+                <button
+                    onclick="addChallenge()"
+                    class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold"
+                >
+                    + Novo
+                </button>
+            </div>
+
+            ${state.habits.length === 0 ? `
+                <div class="bg-white p-6 rounded-2xl shadow text-center">
+                    <p class="text-gray-500">
+                        Nenhum hábito cadastrado ainda
+                    </p>
+                </div>
+            ` : state.habits.map(habit => `
+                <div class="bg-white p-4 rounded-2xl shadow mb-4">
+
+                    <p class="font-bold text-lg">
+                        ${habit.name}
+                    </p>
+
+                    <p class="text-gray-500 mb-4">
+                        ${habit.progress}% concluído
+                    </p>
+
+                    <div class="flex gap-2">
+                        <button
+                            onclick="completeHabit('${habit.id}')"
+                            class="flex-1 bg-blue-500 text-white py-2 rounded-xl"
+                        >
+                            Concluir
+                        </button>
+
+                        <button
+                            onclick="removeHabit('${habit.id}')"
+                            class="flex-1 bg-red-500 text-white py-2 rounded-xl"
+                        >
+                            Excluir
+                        </button>
+                    </div>
+
                 </div>
             `).join('')}
         </div>
