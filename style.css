@@ -1,0 +1,66 @@
+body {
+    font-family: 'Nunito', sans-serif;
+}
+
+.stats-card {
+    background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%);
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.btn-main {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    box-shadow: 0 8px 20px rgba(34,197,94,0.4);
+}
+
+.btn-main:active {
+    transform: scale(0.95);
+}
+
+.btn-progress {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.btn-progress:active {
+    transform: scale(0.85);
+}
+
+.streak {
+    color: #fb923c;
+}
+
+.badge {
+    background: linear-gradient(135deg, #a855f7, #9333ea);
+    box-shadow: 0 5px 15px rgba(168,85,247,0.4);
+}
+
+.pop {
+    animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.xp-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.3);
+    overflow: hidden;
+}
+
+.xp-fill {
+    height: 100%;
+    background: #facc15;
+    transition: width 0.4s ease;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
