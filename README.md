@@ -66,70 +66,69 @@ frontend/
 └── service-worker.js
 
 
-Design da Interface
-Inspiração Visual
-Duolingo
-Habitica
-Streaks
-Estilo
-Visual energético e motivador
-Cores vibrantes
-Cards arredondados
-Sombras suaves
-Gradientes modernos
-Interface amigável e responsiva
-Paleta Principal
-Verde vibrante → progresso e ação
-Laranja → streak e constância
-Roxo → conquistas e badges
-Amarelo → XP e evolução
-Como Executar
-1. Clonar o Projeto
-git clone <url-do-repositorio>
-2. Abrir a pasta do frontend
-cd frontend
-3. Executar
+---
 
-Basta abrir o arquivo index.html no navegador.
+## 🎨 Design da Interface
 
-Ou utilizar uma extensão como Live Server no VS Code.
+**Inspiração:** Duolingo, Habitica, Streaks.
 
-Integração com Backend
+**Estilo:**
+* Visual energético e motivador.
+* Cores vibrantes, cards arredondados e sombras suaves.
 
-Inicialmente o projeto utilizava apenas localStorage, porém foi preparado para integração com API REST.
+**Paleta Principal:** * 🟢 **Verde:** Progresso e ação.
+* 🟠 **Laranja:** Streak e constância.
+* 🟣 **Roxo:** Conquistas e badges.
+* 🟡 **Amarelo:** XP e evolução.
 
-Atualmente o frontend pode consumir rotas como:
+---
 
-GET /api/challenges
-POST /api/challenges
-DELETE /api/challenges/:id
-POST /api/progress
+## ⚙️ Como Executar
 
-Essa integração permite persistência real utilizando MongoDB no backend.
+**1. Clonar o Projeto:**
+`git clone <url-do-repositorio>`
 
-Melhorias Futuras
-Login e autenticação de usuário
-Persistência completa de XP e Level no banco
-Sistema real de streak diário
-Conquistas automáticas via backend
-Ranking entre usuários
-Sistema de notificações
-Confetti ao completar desafios
-Dashboard avançado de evolução
-Objetivo Acadêmico
+**2. Abrir a pasta do frontend:**
+`cd frontend`
+
+**3. Executar:**
+* Basta abrir o arquivo `index.html` no navegador.
+* **Recomendado:** Utilize a extensão **Live Server** no VS Code.
+
+---
+
+## 🔗 Integração com Backend
+
+O projeto foi preparado para integração com API REST, podendo consumir rotas como:
+
+* `GET /api/challenges`
+* `POST /api/challenges`
+* `DELETE /api/challenges/:id`
+* `POST /api/progress`
+
+---
+
+## 🔮 Melhorias Futuras
+
+* Login e autenticação de usuário.
+* Ranking entre usuários.
+* Sistema de notificações.
+* Confetti ao completar desafios.
+* Dashboard avançado de evolução.
+
+---
+
+## 🎓 Objetivo Acadêmico
 
 Este projeto foi desenvolvido com foco em aprendizado prático de:
 
-Frontend moderno
-Consumo de API
-Experiência do usuário (UX)
-Gamificação de sistemas
-Progressive Web Apps
-Integração Full Stack
-Autora
+* Frontend moderno.
+* Consumo de API.
+* Experiência do Usuário (UX).
+* Gamificação de sistemas.
+* Progressive Web Apps (PWA).
 
-Projeto desenvolvido para fins acadêmicos e apresentação de sistema.
+---
 
-Carolline Barbosa Ferreira
-
-UpYou — Evolua todos os dias. ✨
+**Autora:** Carolline Barbosa Ferreira  
+*UpYou — Evolua todos os dias. ✨*
