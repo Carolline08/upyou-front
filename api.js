@@ -1,25 +1,42 @@
 const BASE_URL = 'https://upyou-backend.onrender.com/api';
 
 async function apiRequest(endpoint, method = 'GET', body = null) {
-    const config = {
-        method,
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const config = {
+            method,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        if (body) {
+            config.body = JSON.stringify(body);
         }
-    };
 
-    if (body) {
-        config.body = JSON.stringify(body);
+        const response = await fetch(`${BASE_URL}${endpoint}`, config);
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch {
+            data = {};
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data.message ||
+                data.error ||
+                `Erro ${response.status}: falha na requisição`
+            );
+        }
+
+        return data;
+
+    } catch (error) {
+        console.error('Erro API real:', error.message);
+        throw error;
     }
-
-    const response = await fetch(`${BASE_URL}${endpoint}`, config);
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.message || 'Erro na API');
-    }
-
-    return data;
 }
 
 async function registerUser(name) {
