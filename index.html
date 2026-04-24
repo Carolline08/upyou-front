@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UpYou</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UpYou</title>
 
-   
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#22c55e">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#22c55e">
 
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body class="bg-slate-50 text-slate-800">
-    <div id="app" class="max-w-md mx-auto min-h-screen pb-24"></div>
 
-    <script src="app.js"></script>
+  <div id="app" class="max-w-md mx-auto min-h-screen pb-24"></div>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then(() => console.log('SW ativo'))
-                .catch(err => console.log(err));
-        }
-    </script>
+  <script src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./service-worker.js")
+          .then((reg) => console.log("Service Worker ativo:", reg.scope))
+          .catch((err) => console.log("Erro SW:", err));
+      });
+    }
+  </script>
+
 </body>
 </html>
