@@ -1,19 +1,19 @@
 {
-  "name": "UpYou - Gamifique sua vida",
+  "name": "UpYou",
   "short_name": "UpYou",
-  "start_url": "index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#22c55e",
+  "theme_color": "#16a34a",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon/icon-192.png",
       "sizes": "512x512",
       "type": "image/png"
     }

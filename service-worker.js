@@ -1,20 +1,26 @@
-const CACHE_NAME = 'upyou-v1';
+const CACHE_NAME = 'upyou-cache-v1';
 
-const ASSETS = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/app.js'
+const urlsToCache = [
+    './',
+    './index.html',
+    './app.js',
+    './api.js',
+    './style.css',
+    './manifest.json'
 ];
 
-self.addEventListener('install', e => {
-    e.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+self.addEventListener('install', event => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(urlsToCache))
     );
 });
 
-self.addEventListener('fetch', e => {
-    e.respondWith(
-        caches.match(e.request).then(res => res || fetch(e.request))
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                return response || fetch(event.request);
+            })
     );
 });

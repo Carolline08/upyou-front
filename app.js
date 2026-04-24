@@ -8,10 +8,6 @@ let state = {
     user: ''
 };
 
-const API_URL = 'http://localhost:3000/api/challenges';
-
-
-
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playClick() {
@@ -49,250 +45,135 @@ function playSuccess() {
     osc.stop(audioCtx.currentTime + 0.25);
 }
 
-
-
 function renderAuth() {
     document.getElementById('app').innerHTML = `
         <div class="p-6 flex items-center justify-center min-h-screen bg-gray-100">
-
             <div class="bg-white p-6 rounded-3xl shadow-lg w-full max-w-sm text-center">
-
                 <h1 class="text-4xl font-black mb-6">UpYou</h1>
 
-                <input id="name" placeholder="Seu nome"
-                    class="w-full p-4 border rounded-2xl mb-4 outline-none focus:border-green-500">
+                <input
+                    id="name"
+                    placeholder="Seu nome"
+                    class="w-full p-4 border rounded-2xl mb-4"
+                >
 
-                <button onclick="login()"
-                    class="w-full bg-green-600 text-white font-bold py-4 rounded-2xl mb-3">
+                <button
+                    onclick="login()"
+                    class="w-full bg-green-600 text-white font-bold py-4 rounded-2xl mb-3"
+                >
                     ENTRAR
                 </button>
 
                 <p class="text-xs text-gray-500">
-                    Primeiro acesso? só digite seu nome e entre
+                    Não tem conta?
+                    <span
+                        onclick="showRegister()"
+                        class="text-green-600 font-bold cursor-pointer"
+                    >
+                        Cadastre-se
+                    </span>
                 </p>
-
             </div>
-
         </div>
     `;
 }
 
-function login() {
+function showRegister() {
+    document.getElementById('app').innerHTML = `
+        <div class="p-6 flex items-center justify-center min-h-screen bg-gray-100">
+            <div class="bg-white p-6 rounded-3xl shadow-lg w-full max-w-sm text-center">
+                <h1 class="text-4xl font-black mb-6">UpYou</h1>
+
+                <input
+                    id="name"
+                    placeholder="Seu nome"
+                    class="w-full p-4 border rounded-2xl mb-4"
+                >
+
+                <button
+                    onclick="register()"
+                    class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl mb-3"
+                >
+                    CRIAR CONTA
+                </button>
+
+                <p
+                    onclick="renderAuth()"
+                    class="text-xs text-green-600 cursor-pointer"
+                >
+                    Voltar para login
+                </p>
+            </div>
+        </div>
+    `;
+}
+
+async function register() {
     const name = document.getElementById('name').value.trim();
 
-    if (!name) return alert('Digite seu nome');
-
-    const user = JSON.parse(localStorage.getItem('upyouAuth'));
-
-    if (!user) {
-        localStorage.setItem('upyouAuth', JSON.stringify({ name }));
+    if (!name) {
+        return alert('Digite seu nome');
     }
 
-    state.user = name;
-    state.currentView = 'home';
-
-    loadChallenges();
+    try {
+        await registerUser(name);
+        alert('Conta criada com sucesso');
+        renderAuth();
+    } catch (error) {
+        alert(error.message);
+    }
 }
 
+async function login() {
+    const name = document.getElementById('name').value.trim();
 
+    if (!name) {
+        return alert('Digite seu nome');
+    }
 
-function goHome() {
-    state.currentView = 'home';
-    render();
+    try {
+        const user = await loginUser(name);
+
+        state.user = user.name;
+        state.currentView = 'home';
+
+        await loadChallenges();
+    } catch (error) {
+        alert(error.message);
+    }
 }
-
-function goEvolution() {
-    state.currentView = 'evolution';
-    render();
-}
-
-
 
 async function loadChallenges() {
     try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
+        const data = await getChallenges();
 
         state.habits = data.map(item => ({
             id: item._id,
             name: item.title,
             progress: item.status === 'completed' ? 100 : 0
         }));
-
-    } catch (err) {
-        state.habits = [
-            { id: 1, name: "Academia", progress: 0 },
-            { id: 2, name: "Água", progress: 0 }
-        ];
+    } catch (error) {
+        state.habits = [];
     }
 
     render();
 }
-
-
-
-function progressHabit(id) {
-    state.habits = state.habits.map(h => {
-        if (h.id === id && h.progress < 100) {
-            h.progress += 20;
-            state.xp += 10;
-
-            if (h.progress >= 100) {
-                h.progress = 100;
-                state.streak += 1;
-                playSuccess();
-            } else {
-                playClick();
-            }
-
-            state.level = Math.floor(state.xp / 100) + 1;
-        }
-        return h;
-    });
-
-    checkBadges();
-    render();
-}
-
-function removeHabit(id) {
-    state.habits = state.habits.filter(h => h.id !== id);
-    render();
-}
-
-function addHabit(e) {
-    e.preventDefault();
-
-    const input = document.getElementById('new-habit');
-    if (!input.value) return;
-
-    state.habits.push({
-        id: Date.now(),
-        name: input.value,
-        progress: 0
-    });
-
-    input.value = '';
-    playClick();
-    render();
-}
-
-
-
-function checkBadges() {
-    if (state.xp >= 50 && !state.badges.includes('Iniciante')) {
-        state.badges.push('Iniciante');
-        playSuccess();
-    }
-}
-
-
 
 function render() {
-    const app = document.getElementById('app');
-
-    if (state.currentView === 'auth') {
-        renderAuth();
-        return;
-    }
-
-    const xpPercent = state.xp % 100;
-
-    const header = `
-    <div class="bg-purple-600 text-white p-8 rounded-b-3xl">
-
-        <h1 class="text-4xl font-black">UpYou</h1>
-        <p>Olá, ${state.user}</p>
-
-        <div class="mt-4 bg-white/20 h-2 rounded">
-            <div style="width:${xpPercent}%" class="bg-white h-2 rounded"></div>
-        </div>
-
-        <div class="grid grid-cols-3 gap-3 mt-6 text-center">
-            <div>🔥 ${state.streak}</div>
-            <div>⭐ ${state.level}</div>
-            <div>⚡ ${state.xp}</div>
-        </div>
-
-    </div>
-    `;
-
-    let content = '';
-
-    if (state.currentView === 'home') {
-        content = `
+    document.getElementById('app').innerHTML = `
         <div class="p-6">
+            <h1 class="text-3xl font-black mb-4">
+                Olá, ${state.user}
+            </h1>
 
-            <form onsubmit="addHabit(event)" class="mb-6">
-                <input id="new-habit"
-                    placeholder="Novo hábito..."
-                    class="w-full p-4 border rounded-2xl mb-3">
-
-                <button class="w-full bg-green-600 text-white font-bold py-3 rounded-2xl">
-                    Adicionar
-                </button>
-            </form>
-
-            ${state.habits.map(h => `
-                <div onclick="progressHabit(${h.id})"
-                    class="bg-white p-5 rounded-3xl shadow-md mb-3 flex justify-between items-center cursor-pointer">
-
-                    <div class="flex-1 mr-3">
-                        <p class="font-bold">${h.name}</p>
-
-                        <div class="w-full bg-gray-200 h-2 mt-2 rounded">
-                            <div class="bg-green-500 h-2 rounded"
-                                style="width:${h.progress}%"></div>
-                        </div>
-
-                        <p class="text-xs text-gray-400 mt-1">${h.progress}%</p>
-                    </div>
-
-                    <button onclick="event.stopPropagation(); removeHabit(${h.id})"
-                        class="text-red-400 font-bold">
-                        ✕
-                    </button>
-
+            ${state.habits.map(habit => `
+                <div class="bg-white p-4 rounded-2xl shadow mb-3">
+                    <p class="font-bold">${habit.name}</p>
+                    <p>${habit.progress}% concluído</p>
                 </div>
             `).join('')}
-
         </div>
-        `;
-    }
-
-    if (state.currentView === 'evolution') {
-        content = `
-        <div class="p-6 text-center">
-
-            <h2 class="text-2xl font-black mb-4">Evolução</h2>
-
-            <div class="text-5xl mb-2">🏆</div>
-            <p class="text-3xl font-black text-green-600">${state.xp} XP</p>
-
-            <div class="mt-6">
-                ${state.badges.map(b => `
-                    <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm">
-                        ${b}
-                    </span>
-                `).join('')}
-            </div>
-
-        </div>
-        `;
-    }
-
-    const nav = `
-    <div class="fixed bottom-4 left-4 right-4 bg-black text-white p-3 rounded-full flex justify-around">
-
-        <button onclick="goHome()">Home</button>
-        <button onclick="goEvolution()">Evolução</button>
-
-    </div>
     `;
-
-    app.innerHTML = header + content + nav;
 }
 
-/* INIT */
-
-state.currentView = 'auth';
 renderAuth();
