@@ -130,5 +130,9 @@ Este projeto foi desenvolvido com foco em aprendizado prático de:
 
 ---
 
+## Link de Acesso
+
+[UpYou Evolução](https://upyouevolucao.netlify.app/?classId=3be02262-9689-4da2-a8c8-0401b0b558b9&assignmentId=0ac2d529-9739-4865-9b22-dfb2096917e5&submissionId=d562c5b6-57b8-12b3-2fba-abce0040cd2a)
+
 **Autora:** Carolline Barbosa Ferreira  
 *UpYou — Evolua todos os dias. ✨*
