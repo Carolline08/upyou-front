@@ -1,4 +1,4 @@
-# UpYou Frontend 🚀
+# UpYou Frontend 
 
 ## Sobre o Projeto
 
