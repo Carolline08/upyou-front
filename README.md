@@ -86,7 +86,7 @@ frontend/
 ## ⚙️ Como Executar
 
 **1. Clonar o Projeto:**
-`git clone <url-do-repositorio>`
+`git clone <(https://github.com/Carolline08/upyou-front.git)>`
 
 **2. Abrir a pasta do frontend:**
 `cd frontend`
