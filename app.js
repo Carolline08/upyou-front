@@ -150,7 +150,7 @@ async function loadChallenges() {
         state.habits = data.map(item => ({
             id: item._id,
             name: item.title,
-            progress: item.status === 'completed' ? 100 : 0
+            progress: Math.min((item.progressCount || 0) * 25, 100)
         }));
     } catch (error) {
         state.habits = [];
@@ -158,7 +158,7 @@ async function loadChallenges() {
 
     render();
 }
-
+// Criação do habito 
 async function addChallenge() {
     const title = prompt('Nome do novo hábito:');
 
@@ -174,17 +174,45 @@ async function addChallenge() {
 
         playSuccess();
         await loadChallenges();
+        await checkAchievements();
     } catch (error) {
         alert(error.message);
     }
 }
 
+// Bloco conquista
+async function checkAchievements() {
+    const achievements = await getAchievements();
+
+    achievements.forEach(a => {
+
+        if (a.condition === 'first_habit' && state.habits.length === 1) {
+            unlockAchievement(a);
+        }
+        if (a.condition === 'xp_100' && state.xp >= 100) {
+            unlockAchievement(a);
+        }
+        if (a.condition === 'streak_7' && state.streak >= 7) {
+            unlockAchievement(a);
+        }
+
+    });
+}
+
+// função para quando o usuario desbloqueia uma conquista
+function unlockAchievement(achievement) {
+    const alreadyUnlocked = state.badges.find(b => b._id === achievement._id);
+
+    if (alreadyUnlocked) return;
+
+    state.badges.push(achievement);
+
+    alert(`🏆 Conquista desbloqueada: ${achievement.title}`);
+}
+// 
+// Bloco habito completo 
 async function completeHabit(id) {
     try {
-        await updateChallenge(id, {
-            status: 'completed'
-        });
-
         await saveProgress({
             challengeId: id
         });
@@ -192,12 +220,30 @@ async function completeHabit(id) {
         state.xp += 10;
 
         playSuccess();
+
         await loadChallenges();
+        await checkAchievements();
+
     } catch (error) {
-        alert(error.message);
+        alert("Erro ao concluir progresso: " + error.message);
     }
 }
 
+// Editar habito
+async function editHabit(id, currentName) {
+    const newName = prompt('Novo nome do hábito:', currentName);
+    if (!newName || newName === currentName) return;
+
+    try {
+        await updateChallenge(id, { title: newName });
+        playSuccess();
+        await loadChallenges();
+    } catch (error) {
+        alert("Erro ao editar: " + error.message);
+    }
+}
+
+// Remove habito 
 async function removeHabit(id) {
     try {
         await deleteChallenge(id);
@@ -206,59 +252,93 @@ async function removeHabit(id) {
         alert(error.message);
     }
 }
-
+// Renderização da página 
 function render() {
-    document.getElementById('app').innerHTML = `
-        <div class="p-6">
+    const app = document.getElementById('app');
 
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-black">
-                    Olá, ${state.user}
-                </h1>
+    if (state.currentView === 'auth') {
+        renderAuth();
+        return;
+    }
 
-                <button
-                    onclick="addChallenge()"
-                    class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold"
-                >
-                    + Novo
-                </button>
+    app.innerHTML = `
+        <div class="header-card mb-8">
+            <h1 class="text-4xl font-black mb-1">UpYou</h1>
+            <p class="text-lg opacity-90">Olá, ${state.user}</p>
+            
+            <div class="xp-bar mt-4 mb-6">
+                <div class="xp-fill" style="width: ${(state.xp % 100)}%"></div>
             </div>
 
+            <div class="flex justify-between text-sm font-bold">
+                <span>🔥 ${state.streak || 0}</span>
+                <span>⭐ ${state.level || 1}</span>
+                <span>⚡ ${state.xp || 0}</span>
+            </div>
+        </div>
+
+        <div class="p-6 pb-24">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-black text-gray-800">Meus Hábitos</h1>
+                <button onclick="addChallenge()" class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold">+ Novo</button>
+            </div>
+
+        <div class="space-y-4">
             ${state.habits.length === 0 ? `
-                <div class="bg-white p-6 rounded-2xl shadow text-center">
-                    <p class="text-gray-500">
-                        Nenhum hábito cadastrado ainda
-                    </p>
+                <div class="bg-white p-6 rounded-2xl shadow text-center text-gray-500">
+                    Nenhum hábito cadastrado
                 </div>
             ` : state.habits.map(habit => `
-                <div class="bg-white p-4 rounded-2xl shadow mb-4">
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="font-bold text-gray-700 text-lg">${habit.name}</p>
+                        <span class="text-xs font-black text-green-600">${habit.progress}%</span>
+                    </div>
 
-                    <p class="font-bold text-lg">
-                        ${habit.name}
-                    </p>
+                    <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-4">
+                        <div 
+                            class="bg-green-500 h-full transition-all duration-700 ease-in-out" 
+                            style="width: ${habit.progress}%">
+                        </div>
+                    </div>
 
-                    <p class="text-gray-500 mb-4">
-                        ${habit.progress}% concluído
-                    </p>
-
-                    <div class="flex gap-2">
-                        <button
-                            onclick="completeHabit('${habit.id}')"
-                            class="flex-1 bg-blue-500 text-white py-2 rounded-xl"
-                        >
-                            Concluir
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="completeHabit('${habit.id}')" 
+                                class="${habit.progress >= 100 ? 'bg-gray-200 text-gray-500' : 'bg-blue-500 text-white'} py-2 rounded-xl text-xs font-black active:scale-95 transition-all">
+                            ${habit.progress >= 100 ? 'Feito!' : 'Concluir'}
                         </button>
 
-                        <button
-                            onclick="removeHabit('${habit.id}')"
-                            class="flex-1 bg-red-500 text-white py-2 rounded-xl"
-                        >
+                        <button onclick="editHabit('${habit.id}', '${habit.name}')" 
+                                class="bg-yellow-400 text-white py-2 rounded-xl text-xs font-black">
+                            Editar
+                        </button>
+
+                        <button onclick="removeHabit('${habit.id}')" 
+                                class="bg-red-500 text-white py-2 rounded-xl text-xs font-black">
                             Excluir
                         </button>
                     </div>
-
                 </div>
             `).join('')}
+            </div>
+        </div>
+        <div class="mb-6">
+        
+            <h2 class="text-lg font-bold mb-2">🏆 Conquistas</h2>
+            <div class="flex gap-2 flex-wrap">
+                    ${state.badges.length === 0 ? `
+                        <span class="text-gray-400 text-sm">Nenhuma ainda</span>
+                    ` : state.badges.map(b => `
+                        <div class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">
+                            ${b.title}
+                        </div>
+                    `).join('')}
+                </div>
+        </div>
+        
+        <div class="bottom-nav">
+            <div onclick="state.currentView='home'; render();" class="cursor-pointer text-green-400 font-bold">Home</div>
+            <div onclick="location.reload();" class="cursor-pointer opacity-70 text-red-400 font-bold">Sair</div>
         </div>
     `;
 }

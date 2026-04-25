@@ -4,13 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>UpYou</title>
 
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#16a34a">
-
-  <link rel="apple-touch-icon" href="./icon/icon-192.png">
+  <meta name="theme-color" content="#22c55e">
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -20,23 +17,20 @@
 </head>
 
 <body class="bg-slate-50 text-slate-800">
-
-  <div id="app" class="max-w-md mx-auto min-h-screen pb-24"></div>
+  <div id="app" class="max-w-md mx-auto min-h-screen pb-24">
+      </div>
 
   <script src="api.js"></script>
   <script src="app.js"></script>
+</body>
 
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
           .register("./service-worker.js")
-          .then((registration) => {
-            console.log("Service Worker ativo:", registration.scope);
-          })
-          .catch((error) => {
-            console.log("Erro ao registrar SW:", error);
-          });
+          .then((reg) => console.log("Service Worker ativo:", reg.scope))
+          .catch((err) => console.log("Erro SW:", err));
       });
     }
   </script>

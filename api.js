@@ -8,15 +8,11 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
                 'Content-Type': 'application/json'
             }
         };
-
         if (body) {
             config.body = JSON.stringify(body);
         }
-
         const response = await fetch(`${BASE_URL}${endpoint}`, config);
-
         let data = {};
-
         try {
             data = await response.json();
         } catch {
@@ -65,4 +61,7 @@ async function deleteChallenge(id) {
 
 async function saveProgress(data) {
     return apiRequest('/progress', 'POST', data);
+}
+async function getAchievements() {
+    return apiRequest('/achievements');
 }
